@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Jakob Voß (VZG)" />
+  <meta name="author" content="Uwe Reh (Hebis)" />
+  <meta name="date" content="2013-03-18 14:52:17 +0100" />
+  <title>Document Availability Information API (DAIA)</title>
+   <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style type="text/css">
+/*<![CDATA[*/
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+/*]]>*/
+  </style>
+  <style type="text/css">
+  body { font-family: sans-serif; }
+  a { text-decoration: none }
+  a:hover { text-decoration: underline }
+  h1 { font: 170% sans-serif }
+  h2 { font: 140% sans-serif }
+  h3 { font: 120% sans-serif }
+  dt { font-weight: bold; }
+  h1, h2, h3, h1 a, h2 a, h3 a { color: #005A9C; }
+  table { border-collapse: collapse; }
+  td { border: 1px solid #999; padding: 3px }
+  dl p { margin-top: 0; }
+  dt { margin-top: 0.8em; }
+  dd { margin-left: 1.5em; }
+  ol { margin-bottom: 1em; }
+  table + p { margin-top: 1em; }
+  </style>
+</head>
+<body>
+<header>
+<h1 class="title">Document Availability Information API (DAIA)</h1>
+<h3 class="author">Jakob Voß (VZG)</h3>
+<h3 class="author">Uwe Reh (Hebis)</h3>
+<h4 class="date">2013-03-18 14:52:17 +0100</h4>
+</header>
+
+<h1>Table of Contents</h1>
+<nav id="TOC">
+<ul>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+<li><a href="#structure-and-encoding"><span class="toc-section-number">2</span> Structure and Encoding</a><ul>
+<li><a href="#root-element"><span class="toc-section-number">2.1</span> Root element</a></li>
+<li><a href="#document-element"><span class="toc-section-number">2.2</span> Document element</a></li>
+<li><a href="#item-element"><span class="toc-section-number">2.3</span> Item element</a></li>
+<li><a href="#available-element"><span class="toc-section-number">2.4</span> Available element</a></li>
+<li><a href="#unavailable-element"><span class="toc-section-number">2.5</span> Unavailable element</a></li>
+<li><a href="#messages"><span class="toc-section-number">2.6</span> Messages</a></li>
+<li><a href="#additional-entities"><span class="toc-section-number">2.7</span> Additional entities</a></li>
+</ul></li>
+<li><a href="#daiardf"><span class="toc-section-number">3</span> 3. DAIA/RDF</a></li>
+<li><a href="#query-api"><span class="toc-section-number">4</span> 4. Query API</a><ul>
+<li><a href="#daia-query-api"><span class="toc-section-number">4.1</span> DAIA Query API</a></li>
+<li><a href="#daia-storage-api-experimental"><span class="toc-section-number">4.2</span> DAIA Storage API (experimental)</a></li>
+</ul></li>
+<li><a href="#references"><span class="toc-section-number">5</span> References</a></li>
+<li><a href="#notes-informative"><span class="toc-section-number">6</span> Notes (Informative)</a><ul>
+<li><a href="#integrity-rules"><span class="toc-section-number">6.1</span> Integrity rules</a></li>
+</ul></li>
+</ul>
+</nav>
+<p><strong>Abstract</strong></p>
+<p>The Document Availability Information API (DAIA) defines a data model with serializations in JSON and XML to encode information about the current availability of documents. This document defines the serialization formats DAIA/JSON and DAIA/XML and a HTTP query API to query DAIA information.</p>
+<p>This document is publically available under the terms of the Creative-Commons Attribution-No Derivative (<a href="http://creativecommons.org/licenses/by-nd/3.0/">CC-ND 3.0</a>) license</p>
+<h1 id="introduction"><a href="#TOC"><span class="header-section-number">1</span> Introduction</a></h1>
+<p>[[Datei:Daiamodel-extract.png|frame|right|Core components of the [http://ws.gbv.de/daia/daiamodel.pdf DAIA data model]]]</p>
+<p>The <strong>Document Availability Information API (DAIA)</strong> defines a response format that encodes information about the current availability of documents. The general structure of a DAIA response is a tree of nested elements. A description of the data model is outlined at one page: <a href="http://ws.gbv.de/daia/daiamodel.pdf"><code class="url">http://ws.gbv.de/daia/daiamodel.pdf</code></a></p>
+<p>DAIA format structures can be encoded either in JSON (DAIA/JSON) or in XML (DAIA/XML). The current XML Schema is located at <a href="http://purl.org/NET/DAIA/schema.xsd"><code class="url">http://purl.org/NET/DAIA/schema.xsd</code></a>. The XML namespace and URI for DAIA/XML is <code>http://ws.gbv.de/daia/</code>. The <code>version</code> attribute contains the current version of the schema (0.5).</p>
+<h1 id="structure-and-encoding"><a href="#TOC"><span class="header-section-number">2</span> Structure and Encoding</a></h1>
+<p>In the following paragraphs we want to give a short introduction to DAIA format. Examples of equivalent DAIA document fragments are given in DAIA/JSON and DAIA/XML. The basic information entities of DAIA format are:</p>
+<ul>
+<li><a href="#root-element">daia</a> (root element)</li>
+<li><a href="#document-element">document</a></li>
+<li><a href="#item-element">item</a></li>
+<li><a href="#available-element">available</a> and <a href="#unavailable-element">unavailable</a></li>
+<li><a href="#messages">messages</a></li>
+<li><a href="#additional-entities">Additional entities</a> (institution, department, storage, and limitation)</li>
+</ul>
+<p>Daia entities in DAIA/JSON are encoded as simple nodes with child nodes, daia entities in DAIA/XML are encoded as XML-elements with attributes and child-elements. XML elements include namespaces so you must use an XML parser with support of namespaces to process DAIA/XML. Below the possible and mandatory attributes and child elements or nodes of each daia entities are defined. If an entity is marked with a question mark (<code>?</code>) it is optional. If an entity is marked with a star (<code>\*</code>) it is repeatable and optional. All other entities are mandatory and non-repeatable. Repeatable elements in DAIA/XML are just line up after another. Repeatable elements in DAIA/JSON must be encoded as array with one ore more content elements.</p>
+<table>
+<col style="width: 18%" /><col style="width: 45%" /><col style="width: 35%" /><thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;">DAIA/JSON</th>
+<th style="text-align: left;">DAIA/XML</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">repeated</td>
+<td style="text-align: left;"><pre class="sourceCode json"><code class="sourceCode json">{
+ <span class="dt">&quot;item&quot;</span>: [ { <span class="er">...</span> }, { <span class="er">...</span> }, <span class="er">...</span> ]
+}</code></pre></td>
+<td style="text-align: left;"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;item</span> <span class="er">...</span><span class="kw">&gt;</span> ... <span class="kw">&lt;/item&gt;</span>
+<span class="kw">&lt;item</span> <span class="er">...</span><span class="kw">&gt;</span> ... <span class="kw">&lt;/item&gt;</span>
+...</code></pre></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">not repeated</td>
+<td style="text-align: left;"><pre class="sourceCode json"><code class="sourceCode json">{
+ <span class="dt">&quot;item&quot;</span>: [ { <span class="er">...</span> } ]
+}</code></pre></td>
+<td style="text-align: left;"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;item</span> <span class="er">...</span><span class="kw">&gt;</span> ... <span class="kw">&lt;/item&gt;</span></code></pre></td>
+</tr>
+</tbody>
+</table>
+<p>Content of entities that must not have child nodes are encoded as Unicode strings, numbers, or boolean values. Unless a more specific limitation is defined with an XML Schema Datatype, the content must be an Unicode string (but it may be the empty string). DAIA uses the following XML Schema Datatypes:</p>
+<ul>
+<li><code>xs:boolean</code> - in DAIA/XML one of <code>true</code>, <code>false</code>, <code>1</code>, <code>0</code>. In DAIA/JSON one of <code>true</code>, <code>false</code> (but literally instead of string).</li>
+<li><code>xs:language</code> - must conform to the pattern <code>[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})\*</code>.</li>
+<li><code>xs:date</code> - must follow the form <code>\d{4}[-](\d\d)[-](\d\d)((([+-])\d\d:\d\d)|Z)?</code>.</li>
+<li><code>xs:dateTime</code> - must follow the form <code>\d{4}[-](\d\d)[-](\d\d)[T](\d\d)[:](\d\d)[:]\d\d([.]\d+)?((([+-])\d\d:\d\d)|Z)?</code>.</li>
+<li><code>xs:duration</code> - must follow the form <code>-PnYnMnDTnHnMnS</code>. Empty parts can be omitted.</li>
+<li><code>xs:integer</code> - must conform to the pattern <code>[+-]?[0-9]+</code> in DAIA/XML. In DAIA/JSON it is an integer.</li>
+<li><code>xs:nonNegativeInteger</code> - must conform to the pattern <code>([+]?[0-9]+|-0)</code> in DAIA/XML. In DAIA/JSON it is a non-negative integer.</li>
+<li><code>xs:anyURI</code> - must conform to the pattern of an URI.</li>
+</ul>
+<p>For examples in DAIA/RDF the following namespace prefixes are used:</p>
+<ul>
+<li><code>@prefix daia: &lt;http://purl.org/ontology/daia/&gt; .</code></li>
+<li><code>@prefix daiaservice: &lt;http://purl.org/ontology/daia/Service/&gt; .</code></li>
+<li><code>@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .</code></li>
+<li><code>@prefix bibo: &lt;http://purl.org/ontology/bibo/&gt; .</code></li>
+<li><code>@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .</code></li>
+</ul>
+<a id="Root element"></a><h2 id="root-element"><a href="#TOC"><span class="header-section-number">2.1</span> Root element</a></h2>
+<p>Each full DAIA document contains exactly one root element. In DAIA/XML the root element name is <strong><code>daia</code></strong>, in DAIA/JSON the root element is just an unnamed object. The attributes and child elements are as follows:</p>
+<ul>
+<li><strong><code>version</code></strong> (attribute) - the daia version number (currently <code>0.5</code>)</li>
+<li><strong><code>timestamp</code></strong> (attribute) - the time the document was generated. Type <code>xs:dateTime</code>.</li>
+<li><strong><code>message</code></strong>* (element) - (error) message(s) about the whole response</li>
+<li><strong><code>institution</code></strong>? (element) - information about the institution that grants or knows about services and their availability</li>
+<li><strong><code>document</code></strong>* (element) - a group of items that can be refered to with one identifier. Please note that although the number of document elements can be zero or greater one, one single document entry should be considered as the default.</li>
+</ul>
+<p>In DAIA/XML you must further specifiy the XML namespace <code>http://ws.gbv.de/daia/</code> and may refer to the DAIA XML Schema <code>http://ws.gbv.de/daia/daia.xsd</code> as shown in the following example. In DAIA/JSON you can include a fixed child element that points to the DAIA specification and namespace:</p>
+<ul>
+<li><strong><code>schema</code></strong> (attribute) - DAIA namespace string <code>http://ws.gbv.de/daia/</code></li>
+</ul>
+<p><strong>Example:</strong></p>
+<p>DAIA/JSON</p>
+<pre class="sourceCode json"><code class="sourceCode json">{
+  <span class="dt">&quot;version&quot;</span> : <span class="st">&quot;0.5&quot;</span>,
+  <span class="dt">&quot;schema&quot;</span> : <span class="st">&quot;http://ws.gbv.de/daia/&quot;</span>,
+  <span class="dt">&quot;timestamp&quot;</span> : <span class="st">&quot;2009-06-09T15:39:52.831+02:00&quot;</span>,
+  <span class="dt">&quot;institution&quot;</span> : { }
+}</code></pre>
+<p>DAIA/XML</p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;daia</span><span class="ot"> xmlns=</span><span class="st">&quot;http://ws.gbv.de/daia/&quot;</span><span class="ot"> version=</span><span class="st">&quot;0.5&quot;</span>
+<span class="ot">      xmlns:xsi=</span><span class="st">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+<span class="ot">      xsi:schemaLocation=</span><span class="st">&quot;http://ws.gbv.de/daia/ http://ws.gbv.de/daia/daia.xsd&quot;</span>
+<span class="ot">      timestamp=</span><span class="st">&quot;2009-06-09T15:39:52.831+02:00&quot;</span><span class="kw">&gt;</span>
+   <span class="kw">&lt;institution/&gt;</span>
+<span class="kw">&lt;/daia&gt;</span></code></pre>
+<p>Equivalent DAIA/XML with different namespace prefix:</p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;d:daia</span><span class="ot"> xmlns:d=</span><span class="st">&quot;http://ws.gbv.de/daia/&quot;</span><span class="ot"> version=</span><span class="st">&quot;0.5&quot;</span>
+<span class="ot">      xmlns:s=</span><span class="st">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
+<span class="ot">      s:schemaLocation=</span><span class="st">&quot;http://ws.gbv.de/daia/ http://ws.gbv.de/daia/daia.xsd&quot;</span>
+<span class="ot">      timestamp=</span><span class="st">&quot;2009-06-09T15:39:52.831+02:00&quot;</span><span class="kw">&gt;</span>
+   <span class="kw">&lt;d:institution/&gt;</span>
+<span class="kw">&lt;/d:daia&gt;</span></code></pre>
+<a id="Document element"></a><h2 id="document-element"><a href="#TOC"><span class="header-section-number">2.2</span> Document element</a></h2>
+<p>The <code>document</code> element describes a single document. Nevertheless, several <em>instances</em> of a documents (e.g. copies of a book) can exist. For the instances, have a look at the <a href="#item-element">item element</a> below.</p>
+<ul>
+<li><strong><code>id</code></strong> (attribute) - each document needs an unique id to query it (e.g. ISBN, ppn, etc.). Please consider that ids have to be URIs. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>href</code></strong>? (attribute) - a link to the document or to additional information. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>message</code></strong>* (element) - (error) message(s) about the document.</li>
+<li><strong><code>item</code></strong>* (element) - an instance or copy of the queried document (correspondends to the FRBR class of same name).</li>
+</ul>
+<p>In DAIA/XML messages and items can be mixed in any order.</p>
+<p><strong>Example in DAIA/JSON</strong></p>
+<pre class="sourceCode json"><code class="sourceCode json">{
+  <span class="dt">&quot;document&quot;</span> : [ {
+    <span class="dt">&quot;href&quot;</span> : <span class="st">&quot;https://kataloge.uni-hamburg.de/DB=1/PPNSET?PPN=57793371X&quot;</span>,
+    <span class="dt">&quot;id&quot;</span> : <span class="st">&quot;gvk:ppn:57793371X&quot;</span>,
+    <span class="dt">&quot;item&quot;</span> : [ {  }, {  }, {  } ]
+  } ]
+}</code></pre>
+<p><strong>Example in DAIA/XML</strong></p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;document</span><span class="ot"> href=</span><span class="st">&quot;https://kataloge.uni-hamburg.de/DB=1/PPNSET?PPN=57793371X&quot;</span> 
+<span class="ot">          id=</span><span class="st">&quot;gvk:ppn:57793371X&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;item/&gt;</span>
+  <span class="kw">&lt;item/&gt;</span>
+  <span class="kw">&lt;item/&gt;</span>
+<span class="kw">&lt;/document&gt;</span></code></pre>
+<p><strong>Example in DAIA/RDF (Turtle syntax)</strong></p>
+<pre class="turtle"><code>&lt;gvk:ppn:57793371X&gt; a bibo:Document ;
+  foaf:primaryTopicOf &lt;https://kataloge.uni-hamburg.de/DB=1/PPNSET?PPN=57793371X&gt; ;
+  daia:exemplar [ ], [ ], [ ] .</code></pre>
+<a id="Item element"></a><h2 id="item-element"><a href="#TOC"><span class="header-section-number">2.3</span> Item element</a></h2>
+<p>The <code>item</code> node references a single instance (copy, URI, etc.) of a document. The availability information is of course connected to the item nodes.</p>
+<ul>
+<li><strong><code>id</code></strong>? (attribute) - again, each item (instance) may have an unique ID (e.g., an individual call number for a book). Please consider that ids have to be URIs. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>href</code></strong>? (attribute) - a link to the item or to additional information. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>part</code></strong>? (attribute) - indicate that the item only contains a part of the document (<code>part=&quot;narrower&quot;</code>) or contains more than the document (<code>part=&quot;broader&quot;</code>)</li>
+<li><strong><code>message</code></strong>* (element) - (error) message(s) about the item.</li>
+<li><strong><code>label</code></strong>? (element) - a label that helps to identify and/or find the item (call number etc.)</li>
+<li><strong><code>department</code></strong>? (element) - an administrative sub-entitity of the institution that is responsible for this item</li>
+<li><strong><code>storage</code></strong>? (element) - a physical location of the item (stacks, floor etc.)</li>
+<li><strong><code>available</code></strong>* (element) - information about an available service with the item.</li>
+<li><strong><code>unavailable</code></strong>* (element) - information about an unavailable service with the item</li>
+</ul>
+<p>Multiple service status can be given for an item represented by different available/unavailable elements.</p>
+<p><strong>Example in DAIA/JSON</strong></p>
+<pre class="sourceCode json"><code class="sourceCode json">{
+    <span class="dt">&quot;item&quot;</span> : [ {
+      <span class="dt">&quot;id&quot;</span> : <span class="st">&quot;id:123&quot;</span>,
+      <span class="dt">&quot;message&quot;</span> : [ { <span class="dt">&quot;lang&quot;</span>: <span class="st">&quot;en&quot;</span>, <span class="dt">&quot;content&quot;</span>: <span class="st">&quot;foo&quot;</span> } ],
+      <span class="dt">&quot;department&quot;</span> : { <span class="dt">&quot;id&quot;</span>: <span class="st">&quot;id:abc&quot;</span> },
+      <span class="dt">&quot;label&quot;</span> : <span class="st">&quot;bar&quot;</span>,
+      <span class="dt">&quot;available&quot;</span> : [ {<span class="dt">&quot;service&quot;</span> : <span class="st">&quot;presentation&quot;</span>}, 
+                      {<span class="dt">&quot;service&quot;</span> : <span class="st">&quot;loan&quot;</span>}, 
+                      {<span class="dt">&quot;service&quot;</span> : <span class="st">&quot;interloan&quot;</span>} ],
+      <span class="dt">&quot;unavailable&quot;</span> : [ {<span class="dt">&quot;service&quot;</span> : <span class="st">&quot;openaccess&quot;</span>} ]
+    } ]
+}</code></pre>
+<p><strong>Example in DAIA/XML</strong></p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;item</span><span class="ot"> id=</span><span class="st">&quot;id:123&quot;</span><span class="kw">&gt;</span>
+   <span class="kw">&lt;message</span><span class="ot"> lang=</span><span class="st">&quot;en&quot;</span><span class="kw">&gt;</span>foo<span class="kw">&lt;/message&gt;</span>
+   <span class="kw">&lt;department</span><span class="ot"> id=</span><span class="st">&quot;id:abc&quot;</span> <span class="kw">/&gt;</span>
+   <span class="kw">&lt;label&gt;</span>bar<span class="kw">&lt;label&gt;</span>
+   <span class="kw">&lt;available</span><span class="ot"> service=</span><span class="st">&quot;presentation&quot;</span> <span class="kw">/&gt;</span>
+   <span class="kw">&lt;available</span><span class="ot"> service=</span><span class="st">&quot;loan&quot;</span> <span class="kw">/&gt;</span>
+   <span class="kw">&lt;available</span><span class="ot"> service=</span><span class="st">&quot;interloan&quot;</span> <span class="kw">/&gt;</span>
+   <span class="kw">&lt;unavailable</span><span class="ot"> service=</span><span class="st">&quot;openaccess&quot;</span> <span class="kw">/&gt;</span>
+<span class="kw">&lt;/item&gt;</span></code></pre>
+<p><strong>Example in DAIA/RDF (Turtle syntax)</strong></p>
+<pre class="turtle"><code>&lt;id:123&gt; a frbr:Item ;
+  dct:description &quot;foo&quot;@en ; 
+  daia:label &quot;bar&quot; ;
+  daia:heldBy &lt;id:abc&gt; ;
+  daia:availableFor [ a daia:Service/Presentation ] ;
+  daia:availableFor [ a daia:Service/Loan ] ;
+  daia:availableFor [ a daia:Service/Interloan ] ;
+  daia:unavailableFor [ a daia:Service/Openaccess ] ;
+&lt;id:abc&gt; a foaf:Organization ; dcterms:isPartOf [
+  a foaf:Organization ; dcterms:hasPart &lt;id:abc&gt; ] .</code></pre>
+<p>In DAIA/RDF, an Item element corresponds to an instance of <a href="http://purl.org/vocab/frbr/core#Item">frbr:Item</a> . Partial items refer to items which contain less (<code>narrower</code>) or more (<code>broader</code>) than the whole document:</p>
+<table>
+<col style="width: 23%" /><col style="width: 76%" /><tbody>
+<tr class="odd">
+<td style="text-align: left;">narrower in DAIA/XML</td>
+<td style="text-align: left;"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;document</span><span class="ot"> id=</span><span class="st">&quot;x:123&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;item</span><span class="ot"> id=</span><span class="st">&quot;x:ABC&quot;</span><span class="ot"> part=</span><span class="st">&quot;narrower&quot;</span><span class="kw">/&gt;</span>
+<span class="kw">&lt;/document&gt;</span></code></pre></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">narrower in DAIA/RDF</td>
+<td style="text-align: left;"><pre class="turtle"><code>&lt;x:123&gt; a bibo:Document ; daia:narrowerExemplar &lt;x:ABC&gt; .
+&lt;x:123&gt; a bibo:Document ; dcterms:hasPart [ daia:exemplar &lt;x:ABC&gt; ] } .</code></pre></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">broader in DAIA/XML</td>
+<td style="text-align: left;"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;document</span><span class="ot"> id=</span><span class="st">&quot;x:123&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;item</span><span class="ot"> id=</span><span class="st">&quot;x:ABC&quot;</span><span class="ot"> part=</span><span class="st">&quot;broader&quot;</span><span class="kw">/&gt;</span>
+<span class="kw">&lt;/document&gt;</span></code></pre></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">broader in DAIA/RDF</td>
+<td style="text-align: left;"><pre class="turtle"><code>&lt;x:123&gt; a bibo:Document ; daia:broaderExemplar &lt;x:ABC&gt; .
+&lt;x:123&gt; a bibo:Document ; daia:exemplar [ dcterms:hasPart &lt;x:ABC&gt; ] } .</code></pre></td>
+</tr>
+</tbody>
+</table>
+<a id="Available element"></a><h2 id="available-element"><a href="#TOC"><span class="header-section-number">2.4</span> Available element</a></h2>
+<p>The structure of an <code>available</code> element is:</p>
+<ul>
+<li><strong><code>service</code></strong>? (attribute) - the specific service. The value should be one of <code>presentation</code>, <code>loan</code>, <code>openaccess</code>, <code>interloan</code> or an URI. Multiple services are represented by multiple available/unavailable elements. Type enumeration or <code>xs:anyURI</code>.</li>
+<li><strong><code>href</code></strong>? (attribute) - a link to perform, register or reserve the service. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>delay</code></strong>? (attribute) - a time period of estimated delay. Use <code>unknown</code> or an ISO time period. If missing, then there is probably no significant delay. Type <code>xs:duration</code> or the string <code>unknown</code>.</li>
+<li><strong><code>message</code></strong>* (element) - (error) message(s) about the specific availability status of the item.</li>
+<li><strong><code>limitation</code></strong>* (element) - more specific limitations of the availability status.</li>
+</ul>
+<p>In DAIA/XML messages and limitations can be mixed in any order.</p>
+<p><strong>Services defined in DAIA</strong></p>
+<p><code>presentation</code> : <a href="http://purl.org/ontology/daia/Service/Presentation"><code class="url">http://purl.org/ontology/daia/Service/Presentation</code></a>  The item is accessible within the institution (in their rooms, in their intranet etc.).</p>
+<p><code>loan</code> : <a href="http://purl.org/ontology/daia/Service/Loan"><code class="url">http://purl.org/ontology/daia/Service/Loan</code></a><br> The item is accessible outside of the institution (by lending or online access) for a limited time.</p>
+<p><code>openaccess</code> : <a href="http://purl.org/ontology/daia/Service/Openaccess"><code class="url">http://purl.org/ontology/daia/Service/Openaccess</code></a><br> The item is accessible freely without any restrictions by the institution (Open Access or free copies).</p>
+<p><code>interloan</code> : <a href="http://purl.org/ontology/daia/Service/Interloan"><code class="url">http://purl.org/ontology/daia/Service/Interloan</code></a><br> The item is accessible mediated by another institution.</p>
+<p><em>unspecified</em> : <a href="http://purl.org/ontology/daia/Service"><code class="url">http://purl.org/ontology/daia/Service</code></a><br> The item is accessible for an unspecified purpose by an unspecified way.</p>
+<p>It is recommended to mainly support the four specified services in non-URI form instead of using custom service URIs. If you define a new service URI you should document it as detailed as possible and discuss with other DAIA implementers to ensure interoperability. In terms of RDF all custom services must be subclasses of <a href="http://purl.org/ontology/daia/Service"><code class="url">http://purl.org/ontology/daia/Service</code></a> so a client can treat an unknown service as instance of an unspecified DAIA service. If you omit the service element then the unspecified service must be assumed (do not use the string <code>unspecified</code> or the empty string but just omit to specify a service).</p>
+<p><strong>Example in DAIA/JSON</strong></p>
+<pre class="sourceCode json"><code class="sourceCode json">{ 
+  <span class="dt">&quot;available&quot;</span>: [ { <span class="dt">&quot;service&quot;</span>:<span class="st">&quot;loan&quot;</span>, <span class="dt">&quot;delay&quot;</span>:<span class="st">&quot;PT2H&quot;</span> 
+}</code></pre>
+<p><strong>Example in DAIA/XML</strong></p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;available</span><span class="ot"> service=</span><span class="st">&quot;loan&quot;</span><span class="ot"> delay=</span><span class="st">&quot;PT2H&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<p><strong>Example in DAIA/RDF</strong></p>
+<pre><code>[ ] daia:availableFor [
+  a daia:Service/Loan ;
+  daia:delay &quot;PT2H&quot;^^xsd:duration 
+] .</code></pre>
+<a id="Unavailable element"></a><h2 id="unavailable-element"><a href="#TOC"><span class="header-section-number">2.5</span> Unavailable element</a></h2>
+<p>The structure of an <code>unavailable</code> element is identical to the structure of the available element in most cases.</p>
+<ul>
+<li><strong>`service}}?</strong> (attribute) - see above</li>
+<li><strong><code>href</code></strong>? (attribute) - see above</li>
+<li><strong><code>expected</code></strong> (attribute) - A time period until the service will be available again. Use <code>unknown</code> or an ISO time period. If missing, then the service probably won't be available in the future. Type <code>xs:date</code> or <code>xs:dateTime</code> or the string <code>unknown</code>.</li>
+<li><strong><code>message</code></strong>* (element) - see above</li>
+<li><strong><code>limitation</code></strong>* (element) - more specific limitations of the availability status</li>
+<li><strong><code>queue?</code></strong> (attribute) - the number of waiting requests for this service. Type <code>xs:nonNegativeInteger</code>.</li>
+</ul>
+<p>If no <code>expected</code> element is given, it is not sure whether the item will ever be available, so this is not the same as setting it to <code>unknown</code>. If no <code>queue</code> element is given, it may (but does not need to) be assumed as zero. In DAIA/XML messages and limitations can be mixed in any order.</p>
+<p><strong>Example in DAIA/JSON</strong></p>
+<pre class="sourceCode json"><code class="sourceCode json">{
+    <span class="dt">&quot;unavailable&quot;</span>: [ {
+      <span class="dt">&quot;service&quot;</span>:<span class="st">&quot;presentation&quot;</span>,
+      <span class="dt">&quot;delay&quot;</span>:<span class="st">&quot;PT4H&quot;</span>
+    } ]
+}</code></pre>
+<p><strong>Example in DAIA/XML</strong></p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;unavailable</span><span class="ot"> service=</span><span class="st">&quot;presentation&quot;</span><span class="ot"> delay=</span><span class="st">&quot;PT4H&quot;</span> <span class="kw">/&gt;</span></code></pre>
+<p><strong>Example in DAIA/RDF</strong></p>
+<pre><code>[ ] daia:unavailableFor [
+  a daia:Service/Presentation ;
+  daia:delay &quot;PT4H&quot;^^xsd:duration 
+] .</code></pre>
+<a id="Messages"></a><h2 id="messages"><a href="#TOC"><span class="header-section-number">2.6</span> Messages</a></h2>
+<p>Messages can occur at several places in a DAIA response. The structure of a <code>message</code> element is:</p>
+<ul>
+<li><strong><code>lang</code></strong> (attribute) - a <a href="http://tools.ietf.org/html/rfc3066">RFC 3066</a> language code. Type <code>xs:language</code>.</li>
+<li><strong><code>content</code></strong> (string) - the message text, a simple string without further formatting.</li>
+<li><strong><code>errno</code></strong>? (attribute) - an error code (integer value). Type <code>xs:integer</code>.</li>
+</ul>
+<p><strong>Notes:</strong></p>
+<ul>
+<li>If <code>content</code> is an empty string, it should be removed in DAIA encodings. Applications may treat a missing <code>content</code> as the empty string.</li>
+<li>Messages are not meant to be shown to end-users, but only used for debugging. If you need a DAIA message to transport some relevant information, you likely try to use DAIA for the wrong purpose.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<p>In DAIA/XML the <code>message</code> element is a repeatable XML element with optional attributes <code>lang</code> and <code>errno</code> and the string encoded as element content. In DAIA/JSON a <code>message</code> element is an object with <code>lang</code>, <code>errno</code>, and <code>string</code> as keys. Multiple messages are combined in a JSON array:</p>
+<p><strong>Example in DAIA/JSON</strong></p>
+<pre class="sourceCode json"><code class="sourceCode json">{
+  <span class="dt">&quot;message&quot;</span> : [ {
+    <span class="dt">&quot;content&quot;</span>:<span class="st">&quot;request failed&quot;</span>,
+    <span class="dt">&quot;lang&quot;</span>:<span class="st">&quot;en&quot;</span>
+  } ]
+}</code></pre>
+<p><strong>Example in DAIA/XML</strong></p>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;message</span><span class="ot"> lang=</span><span class="st">&quot;en&quot;</span><span class="kw">&gt;</span>request failed<span class="kw">&lt;/message&gt;</span></code></pre>
+<p><strong>Example in DAIA/RDF</strong></p>
+<pre><code>[ ] daia:message [ 
+  rdfs:value &quot;request failed&quot;@en .
+]</code></pre>
+<a id="Additional entities"></a><h2 id="additional-entities"><a href="#TOC"><span class="header-section-number">2.7</span> Additional entities</a></h2>
+<p>In this section, the additional entries institution, department, storage and limitation are discussed.</p>
+<ul>
+<li><p><strong><code>institution</code></strong> nodes refer to an institution (e.g., the University of Hamburg), referenced by an ISIL, a hyperlink and/or a name.</p></li>
+<li><p><strong><code>department</code></strong> nodes refer to a single department of an institution, e.g., the Faculty of Computer Science of Bielefeld University. They should be used when the institution has an own library.</p></li>
+<li><p><strong><code>storage</code></strong> nodes deliver information about the place where an item is stored (&quot;2nd floor&quot;). * <strong><code>limitation</code></strong> nodes give information of limitations of the availability of an item</p></li>
+</ul>
+<p>The data structure of all these nodes is identical and discussed below.</p>
+<p><strong>Data structure</strong></p>
+<ul>
+<li><strong><code>id</code></strong>? - a (persistent) identifier for the entity. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>href</code></strong>? - a URI linking to the entity. Type <code>xs:anyURI</code>.</li>
+<li><strong><code>content</code></strong>? - a simple message text describing the entity.</li>
+</ul>
+<p>If <code>content</code> is an empty string, it should be removed in DAIA encodings. Applications may treat a missing <code>content</code> as the empty string. It is recommended to supply an <code>id</code> property to point to a taxonomy or authority record and a <code>href</code> property to provide a hyperlink to information about the specified entity.</p>
+<p><strong>Examples in DAIA/JSON and DAIA/XML</strong></p>
+<pre class="sourceCode json"><code class="sourceCode json">{
+    <span class="dt">&quot;institution&quot;</span> : { <span class="dt">&quot;href&quot;</span> : <span class="st">&quot;http://www.tib.uni-hannover.de&quot;</span> }
+    <span class="er">...</span>
+    <span class="st">&quot;department&quot;</span> <span class="er">:</span> { 
+                     <span class="dt">&quot;id&quot;</span> : <span class="st">&quot;info:isil/DE-7-022&quot;</span>,
+                     <span class="dt">&quot;content&quot;</span> : <span class="st">&quot;Library of the Geographical Institute, Goettingen University&quot;</span>
+                   }
+    <span class="er">...</span>
+    <span class="st">&quot;limitation&quot;</span>  <span class="er">:</span> { <span class="dt">&quot;content&quot;</span> : <span class="st">&quot;3 day loan&quot;</span> }
+}</code></pre>
+<pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;institution</span><span class="ot"> href=</span><span class="st">&quot;http://www.tib.uni-hannover.de&quot;</span><span class="kw">/&gt;</span>
+...
+<span class="kw">&lt;department</span><span class="ot"> id=</span><span class="st">&quot;info:isil/DE-7-022&quot;</span><span class="kw">&gt;</span>Library of the Geographical Institute, Goettingen University<span class="kw">&lt;/department&gt;</span> 
+...
+<span class="kw">&lt;limitation&gt;</span>3 day loan<span class="kw">&lt;/limitation&gt;</span></code></pre>
+<h1 id="daiardf"><a href="#TOC"><span class="header-section-number">3</span> 3. DAIA/RDF</a></h1>
+<p>All DAIA documents, given in DAIA/JSON or DAIA/XML can also be expressed in RDF. The DAIA ontology used for this purpose is called DAIA/RDF. The ontology is located at <a href="http://purl.org/ontology/daia/"><code class="url">http://purl.org/ontology/daia/</code></a>.</p>
+<h1 id="query-api"><a href="#TOC"><span class="header-section-number">4</span> 4. Query API</a></h1>
+<a id="DAIA Query API"></a><h2 id="daia-query-api"><a href="#TOC"><span class="header-section-number">4.1</span> DAIA Query API</a></h2>
+<p>A <strong>DAIA-API</strong> is provided in form of a <strong>Base URL</strong> that can be queried by HTTP (or HTTPS) GET. The Base URL may contain fixed query parameters but it must not contain the query parameters <code>id</code> and <code>format</code>. A DAIA query is constructed of the Base URL and a query parameter <strong><code>id</code></strong> for the document URI to be queried for and <strong><code>format</code></strong> with one of <code>xml</code> and <code>json</code>. The value of the <code>format</code> parameter is case insensitive. The response muste be a DAIA/XML document for <code>format=xml</code> and a DAIA/JSON document for <code>format=json</code>. If no <code>format</code> parameter is given or if the parameter value is no known value, a DAIA/XML document may be returned, but you can also return other formats. In particular a DAIA-API may return DAIA/RDF in RDF/XML for <code>format=rdfxml</code> and DAIA/RDF in Turtle for <code>format=ttl</code>. The HTTP response code must be 200 for all non-empty responses (DAIA/JSON and DAIA/XML) and 404 for empty responses (for instance RDF/XML in Turtle format). Multiple document URIs can be provided by concatenating them with the vertical bar (<code>|</code>, <code>%7C</code> in URL-Encoding) but a DAIA server may limit queries to any positive number of URIs.</p>
+<p><strong>Examples:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Base URL</th>
+<th style="text-align: center;">Document URIs</th>
+<th style="text-align: center;">Format</th>
+<th style="text-align: center;">Query URL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>http://example.com/</code></td>
+<td><code>gvk:ppn:588923168</code></td>
+<td>DAIA/XML</td>
+<td><code>http://example.com/?id=gvk:ppn:588923168&amp;format=xml</code></td>
+</tr>
+<tr class="even">
+<td><code>http://example.com/?cmd=daia</code></td>
+<td><code>gvk:ppn:588923168</code></td>
+<td>DAIA/JSON</td>
+<td><code>http://example.com/?cmd=daia&amp;id=gvk:ppn:588923168&amp;format=json</code></td>
+</tr>
+<tr class="odd">
+<td><code>http://example.com/</code></td>
+<td><code>gvk:ppn:588923168</code> and <code>gvk:ppn:365058963</code></td>
+<td>DAIA/JSON</td>
+<td><code>http://example.com/?id=gvk:ppn:588923168%7Cgvk:ppn:365058963&amp;format=json</code></td>
+</tr>
+</tbody>
+</table>
+<a id="DAIA Storage API (experimental)"></a><h2 id="daia-storage-api-experimental"><a href="#TOC"><span class="header-section-number">4.2</span> DAIA Storage API (experimental)</a></h2>
+<p>The <strong>DAIA-Storage-API</strong> is an additional API, similar to the DAIA-API, but to retrieve Storage information only. The request parameter are also <strong><code>format</code></strong> and <strong><code>id</code></strong> but the latter can be any Unicode character string (it is up to the specific implementation of an DAIA-Storage-API what kinds of identifiers to expect). Typical applications include mapping from call number to locations. The request is limited to any combination of the elements <code>institution</code>, <code>department</code>, <code>storage</code>, and <code>message</code>. A DAIA Storage API and a DAIA API <em>must not</em> share the same base URL.</p>
+<h1 id="references"><a href="#TOC"><span class="header-section-number">5</span> References</a></h1>
+<ul>
+<li><strong>[DATATYPES]</strong> <a href="http://www.w3.org/TR/xmlschema-2/">XML Schema Part 2: Datatypes Second Edition</a>. W3C Recommendation 28 October 2004.</li>
+<li><strong>[HTTP]</strong> <a href="http://tools.ietf.org/html/rfc2616">Hypertext Transfer Protocol - HTTP/1.1</a>. June 1999 (RFC 2616).</li>
+<li><strong>[JSON]</strong> <a href="http://www.json.org/">JavaScript Object Notation</a>. (RFC 4627)</li>
+<li><strong>[URI]</strong> <a href="http://tools.ietf.org/html/rfc2396">Uniform Resource Identifiers (URI): Generic Syntax</a>. August 1998 (RFC 2396).</li>
+<li><strong>[UNICODE]</strong> <a href="http://www.unicode.org/versions/Unicode5.0.0/">The Unicode Standard Version 5.0</a>. The Unicode Consortium, 2007.</li>
+<li><strong>[XML]</strong> <a href="http://www.w3.org/TR/xml/">Extensible Markup Language (XML) 1.0 (Fifth Edition)</a>. W3C Recommendation 26 November 2008</li>
+<li><strong>[XML-NS]</strong> <a href="http://www.w3.org/TR/xml-names/">Namespaces in XML 1.0 (Second Edition)</a>. W3C Recommendation 16 August 2006</li>
+</ul>
+<h1 id="notes-informative"><a href="#TOC"><span class="header-section-number">6</span> Notes (Informative)</a></h1>
+<ul>
+<li>A <a href="http://search.cpan.org/perldoc?DAIA">reference implementation in Perl</a> is available at CPAN. It includes a simple <a href="http://search.cpan.org/perldoc?daia">DAIA validator and converter</a>. A public installation of this validator is available at <a href="http://daia.gbv.de/validator/"><code class="url">http://daia.gbv.de/validator/</code></a>.</li>
+<li>All DAIA-related files are combined in a project at Sourceforge: <a href="http://sourceforge.net/projects/daia/"><code class="url">http://sourceforge.net/projects/daia/</code></a>.</li>
+<li>Date and Time values are from a subset of ISO 8601. Even in ISO 8601 there are many ways to specify data and time - so if you need to interpret DAIA data and time values you should use a ISO 8601 library to handle all its particularities and to normalize data and time values.</li>
+<li>The basic structure of DAIA is unlikely to change. However until DAIA 1.0 the following parts need to be finished:
+<ul>
+<li>Definition of canonical DAIA</li>
+<li>Inclusion of some additional obvious constraints like uniqueness of identifiers per document.</li>
+<li>The DAIA/XML namespace (currently <a href="http://ws.gbv.de/daia/"><code class="url">http://ws.gbv.de/daia/</code></a>) may be changed to a more stable PURL.</li>
+</ul></li>
+<li>For comments and public discussion about DAIA you can use <a href="http://wiki.code4lib.org/index.php/DAIA_extensions">this Code4LibWiki page</a>.</li>
+<li>See also the draft of a broader <a href="http://wiki.code4lib.org/index.php/Library_Ontology%20Library">Ontology</a>.</li>
+</ul>
+<a id="Integrity rules"></a><h2 id="integrity-rules"><a href="#TOC"><span class="header-section-number">6.1</span> Integrity rules</a></h2>
+<p>If department and institution have same id, the department SHOULD be ignored.</p>
+</body>
+</html>
