@@ -1,3 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rdf:RDF xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:daia="http://purl.org/ontology/daia/" xmlns:dct="http://purl.org/dc/terms/" xmlns:dso="http://purl.org/ontology/dso#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:vann="http://purl.org/vocab/vann/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+<rdf:RDF xmlns:bibo="http://purl.org/ontology/bibo/" xmlns:daia="http://purl.org/ontology/daia/" xmlns:dct="http://purl.org/dc/terms/" xmlns:dso="http://purl.org/ontology/dso#" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:org="http://www.w3.org/ns/org#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:ssso="http://purl.org/ontology/ssso#" xmlns:vann="http://purl.org/vocab/vann/" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <rdf:Description rdf:about="http://purl.org/ontology/daia">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Ontology"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/daia">
+    <rdfs:label>Document Availability Information Ontology</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/daia">
+    <rdfs:label>DAIA</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/daia">
+    <vann:preferredNamespacePrefix>daia</vann:preferredNamespacePrefix>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#ServiceEvent">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#ServiceEvent">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/ssso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#DocumentService">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#DocumentService">
+    <rdfs:subClassOf rdf:resource="http://purl.org/ontology/ssso#ServiceEvent"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#DocumentService">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/dso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Loan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Loan">
+    <rdfs:subClassOf rdf:resource="http://purl.org/ontology/dso#DocumentService"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Loan">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/dso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Presentation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Presentation">
+    <rdfs:subClassOf rdf:resource="http://purl.org/ontology/dso#DocumentService"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Presentation">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/dso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Interloan">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Interloan">
+    <rdfs:subClassOf rdf:resource="http://purl.org/ontology/dso#DocumentService"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#Interloan">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/dso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#OpenAccess">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#OpenAccess">
+    <rdfs:subClassOf rdf:resource="http://purl.org/ontology/dso#DocumentService"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/dso#OpenAccess">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/dso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#Limitation">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#Limitation">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/ssso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limits">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limits">
+    <rdfs:domain rdf:resource="http://purl.org/ontology/ssso#ServiceLimitation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limits">
+    <rdfs:range rdf:resource="http://purl.org/ontology/ssso#ServiceEvent"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limits">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/ssso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limitedBy">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limitedBy">
+    <rdfs:domain rdf:resource="http://purl.org/ontology/ssso#ServiceEvent"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limitedBy">
+    <rdfs:range rdf:resource="http://purl.org/ontology/ssso#ServiceLimitation"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limitedBy">
+    <owl:inverseOf rdf:resource="http://purl.org/ontology/ssso#limits"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/ssso#limitedBy">
+    <rdfs:isDefinedBy rdf:resource="http://purl.org/ontology/ssso"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://purl.org/ontology/daia#Storage">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+  </rdf:Description>
 </rdf:RDF>

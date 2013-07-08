@@ -9,4 +9,59 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix vann: <http://purl.org/vocab/vann/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ssso: <http://purl.org/ontology/ssso#> .
+
+<http://purl.org/ontology/daia>
+    vann:preferredNamespacePrefix "daia" ;
+    a owl:Ontology ;
+    rdfs:label "DAIA", "Document Availability Information Ontology" .
+
+<http://purl.org/ontology/daia#Storage>
+    a owl:Class .
+
+dso:DocumentService
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/dso> ;
+    rdfs:subClassOf ssso:ServiceEvent .
+
+dso:Interloan
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/dso> ;
+    rdfs:subClassOf dso:DocumentService .
+
+dso:Loan
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/dso> ;
+    rdfs:subClassOf dso:DocumentService .
+
+dso:OpenAccess
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/dso> ;
+    rdfs:subClassOf dso:DocumentService .
+
+dso:Presentation
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/dso> ;
+    rdfs:subClassOf dso:DocumentService .
+
+ssso:Limitation
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/ssso> .
+
+ssso:ServiceEvent
+    a owl:Class ;
+    rdfs:isDefinedBy <http://purl.org/ontology/ssso> .
+
+ssso:limitedBy
+    a owl:ObjectProperty ;
+    rdfs:domain ssso:ServiceEvent ;
+    rdfs:isDefinedBy <http://purl.org/ontology/ssso> ;
+    rdfs:range ssso:ServiceLimitation ;
+    owl:inverseOf ssso:limits .
+
+ssso:limits
+    a owl:ObjectProperty ;
+    rdfs:domain ssso:ServiceLimitation ;
+    rdfs:isDefinedBy <http://purl.org/ontology/ssso> ;
+    rdfs:range ssso:ServiceEvent .
 
